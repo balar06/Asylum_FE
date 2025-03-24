@@ -1,6 +1,5 @@
 import './App.css';
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
  
@@ -16,11 +15,8 @@ import Login from './components/Login';
 import Register from './components/Register';
 
 export default function App() {
-  const { register, handleSubmit, control, trigger, formState: { errors } } = useForm({
-    defaultValues: { children: [] },
-  });
-
-  const [step, setStep] = useState(1);
+   
+  const [step] = useState(1);
 
   return (
     <Router>
