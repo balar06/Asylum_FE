@@ -24,7 +24,6 @@ export default function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Register for Asylum Portal</h2>
 
@@ -88,6 +87,5 @@ export default function Register() {
           </div>
         </form>
       </div>
-    </div>
   );
 }

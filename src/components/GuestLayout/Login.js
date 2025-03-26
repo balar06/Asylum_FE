@@ -9,8 +9,8 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <div className="flex justify-center items-center px-4">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Login to Asylum Portal</h2>
 
         <form className="space-y-4">
