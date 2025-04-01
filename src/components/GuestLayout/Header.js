@@ -14,26 +14,38 @@ export default function Header() {
   return (
     <AppBar position="fixed" elevation={3} sx={{ backgroundColor: '#ffffff', color: '#333' }}>
       <Container>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Toolbar sx={{ justifyContent: 'space-between', flexWrap: 'wrap' }}>
           {/* Logo */}
           <Typography
             component={Link}
             to="/"
             variant="h6"
-            sx={{ fontWeight: 'bold', color: '#1e40af', textDecoration: 'none' }}
+            sx={{ fontWeight: 'bold', color: '#1e40af', textDecoration: 'none', flexGrow: 1 }}
           >
             Asylum Application
           </Typography>
 
-          {/* Navigation Links + Buttons */}
-          <Stack direction="row" spacing={3} alignItems="center">
+          {/* Navigation Links & Buttons */}
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            sx={{
+              flexWrap: 'wrap',
+              justifyContent: 'flex-end',
+            }}
+          >
             {navLinks.map((link) => (
               <Button
                 key={link.label}
                 component={Link}
                 to={link.path}
                 color="inherit"
-                sx={{ fontSize: '1rem', textTransform: 'none' }}
+                sx={{
+                  fontSize: '1rem',
+                  textTransform: 'none',
+                  whiteSpace: 'nowrap',
+                }}
               >
                 {link.label}
               </Button>
