@@ -1,11 +1,28 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const defaultUsername = 'test';
+    const defaultPassword = 'testpassword';
     console.log('Logging in with:', username, password);
+
+    if (username === defaultUsername && password === defaultPassword) {
+      // Simulate storing an authentication token
+      localStorage.setItem('token', 'your-auth-token');
+
+      // Navigate to the dashboard
+      navigate('/dashboard');
+    } else {
+      // Handle authentication failure (e.g., display an error message)
+      console.log('Invalid credentials');
+    }
+
   };
 
   return (
