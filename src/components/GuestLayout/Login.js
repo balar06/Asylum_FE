@@ -9,7 +9,7 @@ export default function Login() {
   const handleLogin = (e) => {
     e.preventDefault();
     const defaultUsername = 'test';
-    const defaultPassword = 'testpassword';
+    const defaultPassword = 'test';
     console.log('Logging in with:', username, password);
 
     if (username === defaultUsername && password === defaultPassword) {
