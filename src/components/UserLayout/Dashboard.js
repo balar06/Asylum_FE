@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import PersonalInfoForm from "../PersonalInfoForm"; // Adjust path if needed
+import PersonalInfoForm from "../PersonalInfoForm";
 import SpouseInfoForm from "../SpouseInfoForm";
+import ChildrenInfoForm from "../ChildrenInfoForm";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("personalInfo");
@@ -9,69 +10,35 @@ export default function Dashboard() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
     control,
+    formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("Form Data Submitted:", data);
-  };
-
-  const requiredFields = ["lastName", "firstName", "dob", "gender", "maritalStatus"];
   const formValues = useWatch({ control });
 
+  const requiredFields = ["lastName", "firstName", "dob", "gender", "maritalStatus", "spouseFullName", "spouseANumber", "spouseDob", "spouseNationality", "spouseBirthPlace"];
   const getProgress = () => {
     if (!formValues) return 0;
-    const filledCount = requiredFields.filter(
-      (field) => formValues?.[field]?.toString().trim()
+    const filledCount = requiredFields.filter((field) =>
+      formValues?.[field]?.toString().trim()
     ).length;
     return Math.round((filledCount / requiredFields.length) * 100);
+  };
+
+  const progress = getProgress(); // Moved here!
+
+  const onSubmit = (data) => {
+    console.log("Form Submitted:", data);
   };
 
   const renderContent = () => {
     switch (activeTab) {
       case "personalInfo":
-        const progress = getProgress();
-        return (
-          <>
-            {/* Progress Bar */}
-            <div className="w-full bg-gray-200 rounded-full h-4 mb-4 overflow-hidden">
-              <div
-                className="bg-green-500 h-full text-xs text-center text-white"
-                style={{ width: `${progress}%` }}
-              >
-                {progress}%
-              </div>
-            </div>
-
-            {/* Form */}
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-              <PersonalInfoForm register={register} errors={errors} />
-              <button
-                type="submit"
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
-              >
-                Submit
-              </button>
-            </form>
-          </>
-        );
-        case "spouseDetail":
-          return (
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-              <SpouseInfoForm register={register} errors={errors} />
-              <div className="mt-4">
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
-                >
-                  Submit Spouse Info
-                </button>
-              </div>
-            </form>
-          );        
+        return <PersonalInfoForm register={register} errors={errors} />;
+      case "spouseDetail":
+        return <SpouseInfoForm register={register} errors={errors} />;
       case "childrenInfo":
-        return <p className="mt-4">Children Details</p>;
+        return <ChildrenInfoForm register={register} errors={errors} />;
       case "background":
         return <p className="mt-4">Background info</p>;
       case "applicationInfo":
@@ -99,18 +66,32 @@ export default function Dashboard() {
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
         ))}
-        <button
-          className="flex-1 text-center px-4 py-2 rounded bg-gray-100 text-gray-400 cursor-not-allowed"
-          disabled
-        >
-          Disabled
-        </button>
       </nav>
 
-      {/* Tab Content */}
-      <div className="mt-6 bg-white p-4 rounded shadow">
+      {/* Form Content */}
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 bg-white p-4 rounded shadow">
+        {(
+          <div className="w-full bg-gray-200 rounded-full h-4 mb-4 overflow-hidden">
+            <div
+              className="bg-green-500 h-full text-xs text-center text-white"
+              style={{ width: `${progress}%` }}
+            >
+              {progress}%
+            </div>
+          </div>
+        )}
+
         {renderContent()}
-      </div>
+
+        <div className="mt-4 flex justify-end">
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded"
+          >
+            Save Move Forward
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

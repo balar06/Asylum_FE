@@ -1,32 +1,95 @@
 import React from "react";
-import { useFieldArray } from "react-hook-form";
 
-const ChildrenInfoForm = ({ control, register }) => {
-  const { fields, append, remove } = useFieldArray({ control, name: "children" });
-
+export default function ChildrenInfoForm({ register, errors }) {
   return (
-    <>
-      <h2 className="text-xl font-semibold mb-2">Children Information</h2>
-      {fields.map((field, index) => (
-        <div key={field.id} className="border p-2 mb-2 rounded">
-          <div>
-            <label className="block text-sm font-medium">Child's Name</label>
-            <input {...register(`children.${index}.name`)} className="border rounded w-full p-2" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Child's Date of Birth</label>
-            <input type="date" {...register(`children.${index}.dob`)} className="border rounded w-full p-2" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Child's Nationality</label>
-            <input {...register(`children.${index}.nationality`)} className="border rounded w-full p-2" />
-          </div>
-          <button type="button" onClick={() => remove(index)} className="text-red-500 text-sm mt-1">Remove Child</button>
-        </div>
-      ))}
-      <button type="button" onClick={() => append({})} className="bg-blue-500 text-white px-2 py-1 rounded">Add Child</button>
-    </>
-  );
-};
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label className="block text-sm font-medium">Last Name</label>
+        <input
+          type="text"
+          {...register("lastName", { required: "Last name is required" })}
+          className="mt-1 block w-full border rounded-md p-2"
+        />
+        {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName.message}</p>}
+      </div>
 
-export default ChildrenInfoForm;
+      <div>
+        <label className="block text-sm font-medium">First Name</label>
+        <input
+          type="text"
+          {...register("firstName", { required: "First name is required" })}
+          className="mt-1 block w-full border rounded-md p-2"
+        />
+        {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName.message}</p>}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium">Middle Name</label>
+        <input
+          type="text"
+          {...register("middleName")}
+          className="mt-1 block w-full border rounded-md p-2"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium">A-Number</label>
+        <input
+          type="text"
+          {...register("aNumber")}
+          className="mt-1 block w-full border rounded-md p-2"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium">Date of Birth</label>
+        <input
+          type="date"
+          {...register("dob", { required: "Date of birth is required" })}
+          className="mt-1 block w-full border rounded-md p-2"
+        />
+        {errors.dob && <p className="text-red-500 text-sm">{errors.dob.message}</p>}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium">City and Country of Birth</label>
+        <input
+          type="text"
+          {...register("birthPlace")}
+          className="mt-1 block w-full border rounded-md p-2"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium">Gender</label>
+        <select
+          {...register("gender", { required: "Gender is required" })}
+          className="mt-1 block w-full border rounded-md p-2"
+        >
+          <option value="">Select...</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+        {errors.gender && <p className="text-red-500 text-sm">{errors.gender.message}</p>}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium">Marital Status</label>
+        <select
+          {...register("maritalStatus", { required: "Marital status is required" })}
+          className="mt-1 block w-full border rounded-md p-2"
+        >
+          <option value="">Select...</option>
+          <option value="Single">Single</option>
+          <option value="Married">Married</option>
+          <option value="Divorced">Divorced</option>
+        </select>
+        {errors.maritalStatus && (
+          <p className="text-red-500 text-sm">{errors.maritalStatus.message}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
