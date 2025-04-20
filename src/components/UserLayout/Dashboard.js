@@ -3,9 +3,29 @@ import { useForm, useWatch } from "react-hook-form";
 import PersonalInfoForm from "../PersonalInfoForm";
 import SpouseInfoForm from "../SpouseInfoForm";
 import ChildrenInfoForm from "../ChildrenInfoForm";
+import BackgroundInfoForm from "../BackgroundInfoForm";
+import ApplicationInfoForm from "../ApplicationInfoForm";
+import { FormDetails, PersonalInfo, SpouseInfo, ChildInfo } from "../../model/FormDetails";
+
+// Enum for tab names
+const Tabs = {
+  PERSONAL: "personalInfo",
+  SPOUSE: "spouseDetail",
+  CHILDREN: "childrenInfo",
+  BACKGROUND: "backgroundInfo",
+  APPLICATION: "applicationInfo",
+};
+
+const tabOrder = [
+  Tabs.PERSONAL,
+  Tabs.SPOUSE,
+  Tabs.CHILDREN,
+  Tabs.BACKGROUND,
+  Tabs.APPLICATION,
+];
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState("personalInfo");
+  const [activeTab, setActiveTab] = useState(Tabs.PERSONAL);
 
   const {
     register,
@@ -15,39 +35,107 @@ export default function Dashboard() {
   } = useForm();
 
   const formValues = useWatch({ control });
+  const maritalStatus = formValues?.personalInfo?.maritalStatus || "";
+  const requiredFields = [
+    "personalInfo.lastName", "personalInfo.firstName", "personalInfo.dob", "personalInfo.gender", "personalInfo.maritalStatus"
+  ];
 
-  const requiredFields = ["lastName", "firstName", "dob", "gender", "maritalStatus", "spouseFullName", "spouseANumber", "spouseDob", "spouseNationality", "spouseBirthPlace"];
   const getProgress = () => {
     if (!formValues) return 0;
-    const filledCount = requiredFields.filter((field) =>
-      formValues?.[field]?.toString().trim()
-    ).length;
+    
+    const filledCount = requiredFields.filter(field => {
+      const pathParts = field.split('.');
+      let value = formValues;
+      
+      // Traverse the nested object structure
+      for (const part of pathParts) {
+        value = value?.[part];
+        if (value === undefined) break;
+      }
+      
+      // Check if the final value exists and is not empty
+      return value !== undefined && value !== null && value.toString().trim() !== '';
+    }).length;
+  
     return Math.round((filledCount / requiredFields.length) * 100);
   };
+  const progress = getProgress();
 
-  const progress = getProgress(); // Moved here!
+  const onSubmit = async (data) => {
+    try {
+      const personalInfo = new PersonalInfo(data.personalInfo);
+      const spouseInfo = new SpouseInfo(data.spouseInfo);
+      const children = (data.children || []).map(child => new ChildInfo(child));
+    
+      const formDetails = new FormDetails({
+        personalInfo,
+        spouseInfo,
+        children
+      });
+  
+      console.log("Form Details:", formDetails);
 
-  const onSubmit = (data) => {
-    console.log("Form Submitted:", data);
+      const response = await fetch('http://localhost:8080/api/pdfHandler/fill', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/pdf',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to generate PDF');
+      }
+  
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'filled-i-589.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('There was an error generating the PDF. Please try again.');
+    }
   };
+  
 
   const renderContent = () => {
     switch (activeTab) {
-      case "personalInfo":
+      case Tabs.PERSONAL:
         return <PersonalInfoForm register={register} errors={errors} />;
-      case "spouseDetail":
-        return <SpouseInfoForm register={register} errors={errors} />;
-      case "childrenInfo":
-        return <ChildrenInfoForm register={register} errors={errors} />;
-      case "background":
-        return <p className="mt-4">Background info</p>;
-      case "applicationInfo":
-        return <p className="mt-4">Application info</p>;
+      case Tabs.SPOUSE:
+        return <SpouseInfoForm register={register} errors={errors} maritalStatus={maritalStatus} />;
+      case Tabs.CHILDREN:
+        return <ChildrenInfoForm register={register} errors={errors} control={control}/>;
+      case Tabs.BACKGROUND:
+        return <BackgroundInfoForm register={register} errors={errors} control={control}/>;
+      case Tabs.APPLICATION:
+        return <ApplicationInfoForm register={register} errors={errors} control={control}/>;
       default:
         return <p className="mt-4">Default info</p>;
     }
   };
 
+  const currentIndex = tabOrder.indexOf(activeTab);
+
+  const handleNext = () => {
+   
+    if (currentIndex < tabOrder.length - 1) {
+      setActiveTab(tabOrder[currentIndex + 1]);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentIndex > 0) {
+      setActiveTab(tabOrder[currentIndex - 1]);
+    }
+  };
+  
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold">Welcome</h1>
@@ -55,11 +143,13 @@ export default function Dashboard() {
 
       {/* Nav Bar */}
       <nav className="flex flex-col sm:flex-row mt-6 space-y-2 sm:space-y-0 sm:space-x-4">
-        {["personalInfo", "spouseDetail", "childrenInfo", "background", "applicationInfo"].map((tab) => (
+        {tabOrder.map((tab) => (
           <button
             key={tab}
             className={`flex-1 text-center px-4 py-2 rounded ${
-              activeTab === tab ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"
+              activeTab === tab
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700"
             }`}
             onClick={() => setActiveTab(tab)}
           >
@@ -70,28 +160,56 @@ export default function Dashboard() {
 
       {/* Form Content */}
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 bg-white p-4 rounded shadow">
-        {(
-          <div className="w-full bg-gray-200 rounded-full h-4 mb-4 overflow-hidden">
-            <div
-              className="bg-green-500 h-full text-xs text-center text-white"
-              style={{ width: `${progress}%` }}
-            >
-              {progress}%
-            </div>
+        {/* Progress Bar */}
+        <div className="w-full bg-gray-200 rounded-full h-4 mb-4 overflow-hidden">
+          <div
+            className="bg-green-500 h-full text-xs text-center text-white"
+            style={{ width: `${progress}%` }}
+          >
+            {progress}%
           </div>
-        )}
+        </div>
 
         {renderContent()}
 
-        <div className="mt-4 flex justify-end">
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded"
-          >
-            Save Move Forward
-          </button>
+        <div className="mt-6 flex justify-end">
+          <div className="flex gap-2">
+            {currentIndex < tabOrder.length - 1 ? '' : (
+              <button
+                type="submit"
+                className="px-4 py-2 bg-green-600 text-white rounded"
+              >
+                Submit
+              </button>
+            )}
+          </div>
         </div>
       </form>
+
+   {/* Navigation Buttons */}
+   <div className="mt-6 flex justify-between">
+          <button
+            type="button"
+            onClick={handleBack}
+            disabled={currentIndex === 0}
+            className={`px-4 py-2 rounded ${currentIndex === 0 ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-gray-500 text-white"}`}
+          >
+            Back
+          </button>
+
+          <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={currentIndex === tabOrder.length - 1}
+                className={`px-4 py-2 rounded ${currentIndex === tabOrder.length - 1 ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-gray-500 text-white"}`}
+              >
+                Next
+              </button>
+          </div>
+        </div>
+
+
     </div>
   );
 }
