@@ -22,7 +22,7 @@ export default function Login() {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/login', null, {
+      const response = await axios.post('https://asylum-be-xbk2.onrender.com/api/auth/login', null, {
         params: {
           email: email,
           password: password,

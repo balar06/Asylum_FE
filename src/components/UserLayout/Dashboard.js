@@ -75,7 +75,7 @@ export default function Dashboard() {
   
       console.log("Form Details:", formDetails);
 
-      const response = await fetch('http://localhost:8080/api/pdfHandler/fill', {
+      const response = await fetch('https://asylum-be-xbk2.onrender.com/api/pdfHandler/fill', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

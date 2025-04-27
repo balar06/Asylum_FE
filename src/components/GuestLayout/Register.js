@@ -24,7 +24,7 @@ export default function Register() {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/api/register', {
+      const response = await axios.post('https://asylum-be-xbk2.onrender.com/api/register', {
         name: formData.username,
         email: formData.email,
         phoneNo: formData.phoneNo,
