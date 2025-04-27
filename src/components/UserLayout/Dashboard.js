@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect  } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import PersonalInfoForm from "../PersonalInfoForm";
 import SpouseInfoForm from "../SpouseInfoForm";
@@ -26,6 +26,12 @@ const tabOrder = [
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState(Tabs.PERSONAL);
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    const name = localStorage.getItem('userName') || '';
+    setUserName(name);
+  }, []);
 
   const {
     register,
@@ -138,8 +144,7 @@ export default function Dashboard() {
   
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold">Welcome</h1>
-      <p className="text-gray-600 mt-2">Here is an overview of your activities.</p>
+      <h1 className="text-2xl font-bold">Welcome {userName && `, ${userName}`}!</h1>
 
       {/* Nav Bar */}
       <nav className="flex flex-col sm:flex-row mt-6 space-y-2 sm:space-y-0 sm:space-x-4">

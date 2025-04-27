@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FaSpinner } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Register() {
@@ -9,6 +11,8 @@ export default function Register() {
     password: '',
     confirmPassword: '',
   });
+  const [loading, setLoading] = useState(false);
+   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -23,19 +27,24 @@ export default function Register() {
       return;
     }
 
+    setLoading(true);
+
     try {
       const response = await axios.post('https://asylum-be-xbk2.onrender.com/api/register', {
         name: formData.username,
         email: formData.email,
         phoneNo: formData.phoneNo,
         password: formData.password,
-      },  { withCredentials: true });
+      }, { withCredentials: true });
 
       alert('Registration successful!');
       console.log('Registered user:', response.data);
+      navigate('/login');
     } catch (error) {
       console.error('Registration failed:', error.response?.data || error.message);
       alert('Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,9 +117,19 @@ export default function Register() {
           <button
             type="button"
             onClick={handleRegister}
-            className="w-full bg-blue-700 text-white py-2 rounded-md hover:bg-blue-800 transition duration-200"
+            disabled={loading}
+            className={`w-full flex items-center justify-center py-2 rounded-md transition duration-200 ${
+              loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 text-white'
+            }`}
           >
-            Register
+            {loading ? (
+              <>
+                <FaSpinner className="animate-spin h-5 w-5 text-white mr-2" />
+                Registering...
+              </>
+            ) : (
+              'Register'
+            )}
           </button>
         </div>
       </form>

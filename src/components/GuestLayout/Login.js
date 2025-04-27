@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaSpinner } from 'react-icons/fa';
 import axios from 'axios';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const validateEmail = (email) => {
@@ -13,34 +15,37 @@ export default function Login() {
     return re.test(String(email).toLowerCase());
   };
 
-   
   const handleLogin = async (e) => {
     e.preventDefault();
-  
+    setLoading(true);
+    setError('');
+
     if (!validateEmail(email)) {
+      setLoading(false);
       setError('Please enter a valid email address');
       return;
     }
-  
+
     try {
       const response = await axios.post('https://asylum-be-xbk2.onrender.com/api/auth/login', {
-        email: email,
-        password: password,
+        email,
+        password,
       });
-  
+
       const { name, phoneNumber, email: userEmail, token } = response.data;
-  
-      // Save user data
+
       localStorage.setItem('token', token);
       localStorage.setItem('userName', name);
       localStorage.setItem('userPhone', phoneNumber);
       localStorage.setItem('userEmail', userEmail);
-  
+
       console.log('Login successful:', response.data);
       navigate('/dashboard');
     } catch (err) {
       console.error('Login error:', err);
       setError('Invalid email or password');
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -77,12 +82,20 @@ export default function Login() {
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-700 text-white py-2 rounded-md hover:bg-blue-800 transition duration-200"
-          >
-            Login
+          <button type="submit" disabled={loading}
+            className={`w-full flex items-center justify-center py-2 rounded-md transition duration-200 ${
+            loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 text-white'
+          }`}
+            >
+        {loading ? (
+          <>
+          <FaSpinner className="animate-spin h-5 w-5 text-white mr-2" />
+          Logging in...
+          </>
+          ) : ('Login'
+            )}
           </button>
+
         </form>
       </div>
     </div>
