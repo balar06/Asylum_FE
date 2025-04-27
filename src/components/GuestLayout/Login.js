@@ -13,31 +13,37 @@ export default function Login() {
     return re.test(String(email).toLowerCase());
   };
 
+   
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     if (!validateEmail(email)) {
       setError('Please enter a valid email address');
       return;
     }
-
+  
     try {
-      const response = await axios.post('https://asylum-be-xbk2.onrender.com/api/auth/login', null, {
-        params: {
-          email: email,
-          password: password,
-        },
-        withCredentials: true, // Include cookies if needed
+      const response = await axios.post('https://asylum-be-xbk2.onrender.com/api/auth/login', {
+        email: email,
+        password: password,
       });
-
+  
+      const { name, phoneNumber, email: userEmail, token } = response.data;
+  
+      // Save user data
+      localStorage.setItem('token', token);
+      localStorage.setItem('userName', name);
+      localStorage.setItem('userPhone', phoneNumber);
+      localStorage.setItem('userEmail', userEmail);
+  
       console.log('Login successful:', response.data);
-      localStorage.setItem('token', 'your-auth-token'); // Replace with actual token if provided
       navigate('/dashboard');
     } catch (err) {
       console.error('Login error:', err);
       setError('Invalid email or password');
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center px-4">
