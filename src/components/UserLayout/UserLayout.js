@@ -1,9 +1,33 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
-import { FaTachometerAlt, FaUserCircle, FaCog, FaFileAlt  } from 'react-icons/fa';
-
+import { Outlet, useNavigate } from 'react-router-dom';
+import { FaTachometerAlt, FaUserCircle, FaCog, FaFileAlt, FaSignOutAlt } from 'react-icons/fa';
+import axios from 'axios';
 
 export default function UserLayout() {
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    const logoutData = {
+      userName: localStorage.getItem('userName'),
+      emailId: localStorage.getItem('userEmail'),
+      token: localStorage.getItem('token'),
+    };
+  
+    try {
+      const response = await axios.post('https://asylum-be-xbk2.onrender.com/api/auth/logout', logoutData);
+      if (response.status === 200) {
+        // Clear local storage and redirect to home page
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userPhone');
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
@@ -19,27 +43,36 @@ export default function UserLayout() {
             <li className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center gap-2">
               <FaTachometerAlt className="text-gray-600" /> Dashboard
             </li>
-          </ul>
-          <ul className="mt-4 space-y-1">
+            <div className="border-t pt-3"></div>
             <li className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center gap-2">
-              <FaFileAlt  className="text-gray-600" /> Documents
+              <FaFileAlt className="text-gray-600" /> Documents
             </li>
+            <div className="border-t pt-3"></div>
           </ul>
         </div>
 
         {/* Profile Section */}
-      
-        {/* Profile Section */}
         <div>
-        <div className="border-t pt-3"></div>
+          <div className="border-t pt-3"></div>
+          {/* Settings */}
           <div className="flex items-center gap-2 p-2 cursor-pointer hover:bg-gray-100 rounded-md">
             <FaCog className="text-2xl text-gray-600" />
             <span className="text-gray-800">Setting</span>
           </div>
           <div className="border-t pt-3"></div>
+          {/* User Info */}
           <div className="flex items-center gap-2 p-2 cursor-pointer hover:bg-gray-100 rounded-md">
             <FaUserCircle className="text-2xl text-gray-600" />
             <span className="text-gray-800">User Name</span>
+          </div>
+          <div className="border-t pt-3"></div>
+          {/* Logout Button */}
+          <div
+            onClick={logout}
+            className="flex items-center gap-2 p-2 cursor-pointer bg-red-100 hover:bg-red-200 rounded-md mb-2"
+          >
+            <FaSignOutAlt className="text-2xl text-red-600" />
+            <span className="text-red-700 font-medium">Logout</span>
           </div>
         </div>
       </aside>
