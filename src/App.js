@@ -12,6 +12,7 @@ import Login from './components/GuestLayout/Login';
 import Register from './components/GuestLayout/Register';
 
 import Dashboard from './components/UserLayout/Dashboard';
+import Screener from './components/UserLayout/Screener';
 
 // Simulating authentication (Replace with actual logic)
 const isAuthenticated = () => {
@@ -37,18 +38,28 @@ export default function App() {
           <Route path="/register" element={<Register />} />
         </Route>
 
-        {/* User Routes */}
+        {/* Authenticated Routes */}
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
-              <UserLayout />
+              <UserLayout>
+                <Dashboard />
+              </UserLayout>
             </PrivateRoute>
           }
-        >
-          <Route index element={<Dashboard />} />
-          {/* Add more user-specific routes here */}
-        </Route>
+        />
+
+        <Route
+          path="/screener"
+          element={
+            <PrivateRoute>
+              <UserLayout>
+                <Screener />
+              </UserLayout>
+            </PrivateRoute>
+          }
+        />
 
         {/* Redirect unknown routes to login */}
         <Route path="*" element={<Navigate to="/login" />} />

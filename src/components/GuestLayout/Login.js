@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { FaSpinner } from 'react-icons/fa';
 import axios from 'axios';
 
@@ -40,7 +40,7 @@ export default function Login() {
       localStorage.setItem('userEmail', userEmail);
 
       console.log('Login successful:', response.data);
-      navigate('/dashboard');
+      navigate('/screener');
     } catch (err) {
       console.error('Login error:', err);
       setError('Invalid email or password');
@@ -97,6 +97,14 @@ export default function Login() {
           </button>
 
         </form>
+
+        <p className="mt-6 text-center text-sm text-gray-600">
+          New to Asylum App?{' '}
+          <Link to="/register" className="text-blue-600 hover:underline font-medium">
+            Register Here
+          </Link>
+        </p>
+
       </div>
     </div>
   );

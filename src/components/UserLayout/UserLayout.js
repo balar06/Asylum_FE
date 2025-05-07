@@ -1,9 +1,9 @@
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { FaTachometerAlt, FaUserCircle, FaCog, FaFileAlt, FaSignOutAlt } from 'react-icons/fa';
+import {FaQuestionCircle , FaTachometerAlt, FaUserCircle, FaCog, FaFileAlt, FaSignOutAlt } from 'react-icons/fa';
 import axios from 'axios';
 
-export default function UserLayout() {
+export default function UserLayout({ children }) {
   const navigate = useNavigate();
 
   const logout = async () => {
@@ -40,7 +40,13 @@ export default function UserLayout() {
 
           {/* Navigation */}
           <ul className="mt-4 space-y-1">
-            <li className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center gap-2">
+            <li onClick={() => navigate('/screener/')} 
+              className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center gap-2">
+              <FaQuestionCircle className="text-gray-600" /> Screener
+            </li>
+            <div className="border-t pt-3"></div>
+            <li onClick={() => navigate('/dashboard/')}  
+              className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center gap-2">
               <FaTachometerAlt className="text-gray-600" /> Dashboard
             </li>
             <div className="border-t pt-3"></div>
@@ -79,7 +85,9 @@ export default function UserLayout() {
 
       {/* Main Content */}
       <main className="flex-1 p-6">
-        <Outlet />
+      <div className="flex-grow p-4">
+        {children || <Outlet />}
+      </div>
       </main>
     </div>
   );
