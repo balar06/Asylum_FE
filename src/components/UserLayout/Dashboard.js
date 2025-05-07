@@ -5,6 +5,7 @@ import SpouseInfoForm from "../SpouseInfoForm";
 import ChildrenInfoForm from "../ChildrenInfoForm";
 import BackgroundInfoForm from "../BackgroundInfoForm";
 import ApplicationInfoForm from "../ApplicationInfoForm";
+import { FaSpinner } from 'react-icons/fa';
 import { FormDetails, PersonalInfo, SpouseInfo, ChildInfo } from "../../model/FormDetails";
 
 // Enum for tab names
@@ -27,6 +28,7 @@ const tabOrder = [
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState(Tabs.PERSONAL);
   const [userName, setUserName] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || '';
@@ -68,6 +70,7 @@ export default function Dashboard() {
   const progress = getProgress();
 
   const onSubmit = async (data) => {
+    setLoading(true);
     try {
       const personalInfo = new PersonalInfo(data.personalInfo);
       const spouseInfo = new SpouseInfo(data.spouseInfo);
@@ -106,6 +109,8 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('There was an error generating the PDF. Please try again.');
+    }finally {
+      setLoading(false); // Stop loading
     }
   };
   
@@ -181,11 +186,22 @@ export default function Dashboard() {
           <div className="flex gap-2">
             {currentIndex < tabOrder.length - 1 ? '' : (
               <button
-                type="submit"
-                className="px-4 py-2 bg-green-600 text-white rounded"
-              >
-                Submit
-              </button>
+              type="submit"
+              disabled={loading}
+              className={`px-4 py-2 rounded flex items-center justify-center ${
+                loading ? 'bg-green-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white'
+              }`}
+            >
+              {loading ? (
+                <>
+                  <FaSpinner className="animate-spin h-5 w-5 mr-2" />
+                  Processing...
+                </>
+              ) : (
+                'Submit'
+              )}
+            </button>
+            
             )}
           </div>
         </div>
