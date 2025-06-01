@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaSpinner } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../../constants/api';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ export default function Register() {
       [e.target.name]: e.target.value,
     }));
   };
+  
 
   const handleRegister = async () => {
     if (formData.password !== formData.confirmPassword) {
@@ -30,7 +32,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://asylum-be-xbk2.onrender.com/api/register', {
+      const response = await axios.post(API_ENDPOINTS.REGISTER, {
         name: formData.username,
         email: formData.email,
         phoneNo: formData.phoneNo,

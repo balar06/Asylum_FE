@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaSpinner } from 'react-icons/fa';
+import { API_ENDPOINTS } from '../../constants/api';
 import axios from 'axios';
 
 export default function Login() {
@@ -27,13 +28,14 @@ export default function Login() {
     }
 
     try {
-      const response = await axios.post('https://asylum-be-xbk2.onrender.com/api/auth/login', {
+      const response = await axios.post(API_ENDPOINTS.LOGIN, {
         email,
         password,
       });
 
-      const { name, phoneNumber, email: userEmail, token } = response.data;
+      const { name, phoneNumber, email: userEmail, token, userId } = response.data;
 
+      localStorage.setItem('userId', userId);
       localStorage.setItem('token', token);
       localStorage.setItem('userName', name);
       localStorage.setItem('userPhone', phoneNumber);

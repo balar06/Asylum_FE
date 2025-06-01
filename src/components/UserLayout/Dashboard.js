@@ -7,7 +7,7 @@ import BackgroundInfoForm from "../BackgroundInfoForm";
 import ApplicationInfoForm from "../ApplicationInfoForm";
 import { FaSpinner } from 'react-icons/fa';
 import { FormDetails, PersonalInfo, SpouseInfo, ChildInfo } from "../../model/FormDetails";
-
+import { API_ENDPOINTS } from '../../constants/api';
 // Enum for tab names
 const Tabs = {
   PERSONAL: "personalInfo",
@@ -29,7 +29,6 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState(Tabs.PERSONAL);
   const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [passportImage, setPassportImage] = useState(null); // State for passport image
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || '';
@@ -71,13 +70,10 @@ export default function Dashboard() {
   const progress = getProgress();
 
   const onSubmit = async (data) => {
-    if (!passportImage) {
-      alert("Please upload your passport image.");
-      return;
-    }
 
     setLoading(true);
     try {
+      data.personalInfo.userId = localStorage.getItem('userId') || '';
       const personalInfo = new PersonalInfo(data.personalInfo);
       const spouseInfo = new SpouseInfo(data.spouseInfo);
       const children = (data.children || []).map(child => new ChildInfo(child));
@@ -94,8 +90,7 @@ export default function Dashboard() {
 
       formData.append("formData", new Blob([JSON.stringify(data)], { type: "application/json" }));
       
-      formData.append("image", passportImage);
-      const response = await fetch('https://asylum-be-xbk2.onrender.com/api/pdfHandler/fill', {
+      const response = await fetch(API_ENDPOINTS.PDFHANDLER, {
         method: 'POST',
         body: formData,
       });
@@ -121,12 +116,6 @@ export default function Dashboard() {
     }
   };
 
-  const handlePassportChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setPassportImage(file);
-    }
-  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -197,12 +186,7 @@ export default function Dashboard() {
             {currentIndex < tabOrder.length - 1 ? '' : (
               <>
                 {/* Passport Upload */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePassportChange}
-                  className="px-4 py-2 rounded bg-gray-500 text-white"
-                />
+                
                 {/* Submit Button */}
                 <button
                   type="submit"

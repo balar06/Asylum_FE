@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../../constants/api';
 
 const questions = [
   {
@@ -72,17 +73,6 @@ export default function Screener() {
     setStep((prev) => prev + 1);
   };
 
-  const handleFinalSubmit = async (value) => {
-    try {
-      const updatedAnswers = { ...answers, [current.id]: value };
-      setAnswers(updatedAnswers);
-      localStorage.setItem('asylumEligible', 'true');
-      navigate('/dashboard');
-    } catch {
-      setError('Something went wrong. Please try again.');
-    }
-  };
-
   const renderQuestion = () => {
     if (current.type === 'info') {
       return (
@@ -147,18 +137,80 @@ export default function Screener() {
     if (current.type === 'text') {
       return (
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            const val = e.target.elements[0].value;
-            handleFinalSubmit(val);
+            const aNumber = e.target.elements['anumber'].value;
+            const passportFile = e.target.elements['passportFile'].files[0];
+            const birthCertFile = e.target.elements['birthCertificateFile'].files[0];
+
+            if (!passportFile || !birthCertFile) {
+              setError('Please upload both passport and birth certificate files.');
+              return;
+            }
+
+            try {
+              const formData = new FormData();
+              formData.append('passportFile', passportFile);
+              formData.append('birthCertificateFile', birthCertFile);
+
+              const userId = localStorage.getItem('userId');
+              if (!userId) {
+                setError('User ID not found. Please log in again.');
+                return;
+              }
+
+              const res = await fetch(`${API_ENDPOINTS.UPLOADDOCUMENT}/${userId}`, {
+                method: 'POST',
+                body: formData,
+              });
+
+              if (!res.ok) {
+                const errMsg = await res.text();
+                throw new Error(errMsg || 'Upload failed');
+              }
+
+              const uploadResponse = await res.json();
+
+              const updatedAnswers = {
+                ...answers,
+                [current.id]: aNumber,
+                documents: uploadResponse,
+              };
+
+              setAnswers(updatedAnswers);
+              localStorage.setItem('asylumEligible', 'true');
+              navigate('/dashboard');
+            } catch (err) {
+              setError(err.message || 'Something went wrong. Please try again.');
+            }
           }}
         >
           <h5 className="mb-3">{current.question}</h5>
           <input
+            name="anumber"
             type="text"
             className="form-control mb-3"
             placeholder={current.placeholder}
           />
+
+          <label className="form-label">Upload Passport (PDF/Image)</label>
+          <input
+            name="passportFile"
+            type="file"
+            className="form-control mb-3"
+            accept=".pdf,image/*"
+            required
+          />
+
+          <label className="form-label">Upload Birth Certificate (PDF/Image)</label>
+          <input
+            name="birthCertificateFile"
+            type="file"
+            className="form-control mb-4"
+            accept=".pdf,image/*"
+            required
+          />
+
           <button type="submit" className="btn btn-primary w-100">Submit</button>
         </form>
       );

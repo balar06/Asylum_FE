@@ -1,5 +1,6 @@
 export class PersonalInfo {
   constructor({
+    userId = "",
     aNumber = "",
     ssn = "",
     uscisNumber = "",

@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import {FaQuestionCircle , FaTachometerAlt, FaUserCircle, FaCog, FaFileAlt, FaSignOutAlt } from 'react-icons/fa';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../../constants/api';
 
 export default function UserLayout({ children }) {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function UserLayout({ children }) {
     };
   
     try {
-      const response = await axios.post('https://asylum-be-xbk2.onrender.com/api/auth/logout', logoutData);
+      const response = await axios.post(API_ENDPOINTS.LOGOUT, logoutData);
       if (response.status === 200) {
         // Clear local storage and redirect to home page
         localStorage.removeItem('token');
