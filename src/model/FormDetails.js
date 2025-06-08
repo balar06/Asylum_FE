@@ -1,6 +1,11 @@
 export class PersonalInfo {
   constructor({
     userId = "",
+    passportNumber = "",
+    passportCountry = "",
+    passportIssueDate = "",
+    passportExpiryDate = "",
+    passportPlaceOfIssuance = "",
     aNumber = "",
     ssn = "",
     uscisNumber = "",
@@ -30,7 +35,9 @@ export class PersonalInfo {
     ethnicGroup = "",
     religion = "",
   } = {}) {
+    this.userId = userId;
     this.aNumber = aNumber;
+    this.passportNumber = passportNumber;
     this.ssn = ssn;
     this.uscisNumber = uscisNumber;
     this.lastName = lastName;

@@ -8,6 +8,7 @@ import ApplicationInfoForm from "../ApplicationInfoForm";
 import { FaSpinner } from 'react-icons/fa';
 import { FormDetails, PersonalInfo, SpouseInfo, ChildInfo } from "../../model/FormDetails";
 import { API_ENDPOINTS } from '../../constants/api';
+import { useLocation } from 'react-router-dom';
 // Enum for tab names
 const Tabs = {
   PERSONAL: "personalInfo",
@@ -29,6 +30,9 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState(Tabs.PERSONAL);
   const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const passportInfo = location.state?.passportInfo;
+   const aNumber = location.state?.aNumber;
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || '';
@@ -120,7 +124,7 @@ export default function Dashboard() {
   const renderContent = () => {
     switch (activeTab) {
       case Tabs.PERSONAL:
-        return <PersonalInfoForm register={register} errors={errors} />;
+        return <PersonalInfoForm register={register} errors={errors} passportInfo={passportInfo} aNumber={aNumber} />;
       case Tabs.SPOUSE:
         return <SpouseInfoForm register={register} errors={errors} maritalStatus={maritalStatus} />;
       case Tabs.CHILDREN:

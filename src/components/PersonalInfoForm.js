@@ -1,12 +1,14 @@
 import React from "react";
 
-export default function PersonalInfoForm({ register, errors }) {
+export default function PersonalInfoForm({ register, errors, passportInfo, aNumber }) {
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* 1-6: Name & Identification */}
       <div>
         <label className="block text-sm font-medium">A-Number</label>
-        <input type="text" {...register("personalInfo.aNumber")} className="mt-1 block w-full border rounded-md p-2" />
+        <input defaultValue={aNumber}
+        type="text" {...register("personalInfo.aNumber")} className="mt-1 block w-full border rounded-md p-2" />
       </div>
 
       <div>
@@ -27,7 +29,8 @@ export default function PersonalInfoForm({ register, errors }) {
 
       <div>
         <label className="block text-sm font-medium">First Name</label>
-        <input type="text" {...register("personalInfo.firstName", { required: "First name is required" })} className="mt-1 block w-full border rounded-md p-2" />
+        <input type="text" defaultValue={passportInfo?.userName}
+         {...register("personalInfo.firstName", { required: "First name is required" })} className="mt-1 block w-full border rounded-md p-2" />
         {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName.message}</p>}
       </div>
 
@@ -72,6 +75,58 @@ export default function PersonalInfoForm({ register, errors }) {
         <label className="block text-sm font-medium">Telephone Number</label>
         <input type="text" {...register("personalInfo.residencePhone")} className="mt-1 block w-full border rounded-md p-2" />
       </div>
+
+
+
+          {/* Passport Number */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Passport Number</label>
+        <input
+          type="text" defaultValue={passportInfo?.passportNumber}
+          {...register("personalInfo.passportNumber")}
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+        />
+      </div>
+
+      {/* Country of Issuance */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Country of Issuance</label>
+        <input
+          type="text"
+          {...register("personalInfo.passportCountry")}
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+        />
+      </div>
+
+      {/* Passport Issuance Date */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Passport Issuance Date</label>
+        <input
+          type="date" defaultValue={passportInfo?.passportIssueDate}
+          {...register("personalInfo.passportIssueDate")}
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+        />
+      </div>
+
+      {/* Passport Expiration Date */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Passport Expiration Date</label>
+        <input
+          type="date" defaultValue={passportInfo?.passportExpiryDate}
+          {...register("personalInfo.passportExpiryDate")}
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+        />
+      </div>
+
+      {/* Place of Issuance */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Place of Issuance</label>
+        <input
+          type="text"
+          {...register("personalInfo.passportPlaceOfIssuance")}
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+        />
+    </div>
 
       {/* 9. Mailing Address */}
       <div className="md:col-span-2 mt-4 border-t pt-4">
@@ -127,7 +182,8 @@ export default function PersonalInfoForm({ register, errors }) {
 
       <div>
         <label className="block text-sm font-medium">Date of Birth</label>
-        <input type="date" {...register("personalInfo.dob")} className="mt-1 block w-full border rounded-md p-2" />
+        <input type="date" defaultValue={passportInfo?.passportDob}
+         {...register("personalInfo.dob")} className="mt-1 block w-full border rounded-md p-2" />
       </div>
 
       <div>
@@ -155,6 +211,7 @@ export default function PersonalInfoForm({ register, errors }) {
         <input type="text" {...register("personalInfo.religion")} className="mt-1 block w-full border rounded-md p-2" />
       </div>
 
+ 
       {/* Immigration Proceedings & Other Fields will go in next step/page if needed */}
     </div>
   );

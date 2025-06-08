@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../constants/api';
+import PassportDetails from '../../model/PassportDetails';
+import { FaSpinner } from 'react-icons/fa'; // For spinner
+
 
 const questions = [
   {
     id: 0,
     type: 'info',
-    content: `This screening is not legal advice. Using this tool does not create a lawyer-client relationship. Only a lawyer or a DOJ accredited representative can give you legal advice. AsylumLine does not connect to the U.S. Citizenship and Immigration Services (“USCIS” or government).`,
+    content: `This screening is not legal advice. Using this tool does not create a lawyer-client relationship. Only a lawyer or a DOJ accredited representative can give you legal advice.`,
     buttonText: 'Start Screening',
   },
   {
     id: 1,
     type: 'yesno',
     question: 'Are you currently in the U.S.?',
-    onNo: 'You NEED to be physically present in the U.S. to apply for asylum.',
+    onNo: 'You need to be physically present in the U.S. to apply for asylum.',
   },
   {
     id: 2,
@@ -25,7 +28,7 @@ const questions = [
     id: 3,
     type: 'yesno',
     question: 'Do you fear persecution in your home country?',
-    onNo: 'You need to hold fear of persecution to apply for asylum.',
+    onNo: 'You must fear persecution to apply for asylum.',
   },
   {
     id: 4,
@@ -55,6 +58,7 @@ export default function Screener() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const current = questions[step];
+  const [loading, setLoading] = useState(false);
 
   const handleNext = (answer) => {
     if (current.type === 'yesno') {
@@ -158,7 +162,7 @@ export default function Screener() {
                 setError('User ID not found. Please log in again.');
                 return;
               }
-
+              setLoading(true);
               const res = await fetch(`${API_ENDPOINTS.UPLOADDOCUMENT}/${userId}`, {
                 method: 'POST',
                 body: formData,
@@ -171,17 +175,24 @@ export default function Screener() {
 
               const uploadResponse = await res.json();
 
+              const passportInfo = {
+                ...PassportDetails,
+                ...uploadResponse,
+              };
+
               const updatedAnswers = {
                 ...answers,
                 [current.id]: aNumber,
-                documents: uploadResponse,
+                documents: passportInfo,
               };
 
               setAnswers(updatedAnswers);
               localStorage.setItem('asylumEligible', 'true');
-              navigate('/dashboard');
+              navigate('/dashboard', { state: { passportInfo, aNumber} });
             } catch (err) {
               setError(err.message || 'Something went wrong. Please try again.');
+            } finally {
+              setLoading(false);
             }
           }}
         >
@@ -211,7 +222,20 @@ export default function Screener() {
             required
           />
 
-          <button type="submit" className="btn btn-primary w-100">Submit</button>
+        <button type="submit" disabled={loading}
+        className={`px-4 py-2 rounded flex items-center justify-center w-100 ${
+          loading
+            ? 'bg-green-400 cursor-not-allowed'
+            : 'bg-green-600 hover:bg-green-700 text-white'
+        }`}> {loading ? (
+          <>
+            <FaSpinner className="animate-spin h-5 w-5 mr-2" />
+            Processing...
+          </>
+        ) : (
+          'Submit'
+        )}
+      </button>
         </form>
       );
     }
