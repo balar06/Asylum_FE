@@ -23,7 +23,8 @@ export default function PersonalInfoForm({ register, errors, passportInfo, aNumb
 
       <div>
         <label className="block text-sm font-medium">Last Name</label>
-        <input type="text" {...register("personalInfo.lastName", { required: "Last name is required" })} className="mt-1 block w-full border rounded-md p-2" />
+        <input type="text"  defaultValue={passportInfo?.passportLastName}
+        {...register("personalInfo.lastName", { required: "Last name is required" })} className="mt-1 block w-full border rounded-md p-2" />
         {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName.message}</p>}
       </div>
 
