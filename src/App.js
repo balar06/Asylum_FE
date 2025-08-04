@@ -1,11 +1,11 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
+import Home from './components/GuestLayout/Home'; 
 import GuestLayout from './components/GuestLayout/GuestLayout';
 import UserLayout from './components/UserLayout/UserLayout';
 
 import WhyUs from './components/GuestLayout/WhyUs';
-import Industries from './components/Industries';
+import Industries from './components/GuestLayout/Industries';
 import About from './components/GuestLayout/About';
 import Contact from './components/GuestLayout/Contact';
 import Login from './components/GuestLayout/Login';
@@ -24,19 +24,31 @@ const PrivateRoute = ({ children }) => {
   return isAuthenticated() ? children : <Navigate to="/login" />;
 };
 
+// PublicRoute: only for unauthenticated users
+const PublicRoute = ({ children }) => {
+  return !isAuthenticated() ? children : <Navigate to="/dashboard" />;
+};
+
 export default function App() {
   return (
     <Router>
       <Routes>
         {/* Guest Routes */}
-        <Route element={<GuestLayout />}>
-          <Route path="/why-us" element={<WhyUs />} />
-          <Route path="/industries" element={<Industries />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Route>
+        <Route   element={
+          <PublicRoute>
+            <GuestLayout />
+          </PublicRoute> 
+        }
+        >
+      <Route path="/" element={<Home />} /> 
+      <Route path="/Home" element={<Home />} /> 
+      <Route path="/why-us" element={<WhyUs />} />
+      <Route path="/industries" element={<Industries />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+    </Route>
 
         {/* Authenticated Routes */}
         <Route

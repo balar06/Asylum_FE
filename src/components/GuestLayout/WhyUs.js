@@ -51,6 +51,29 @@ export default function WhyUs() {
             </div>
           </div>
         </div>
+
+        {/* New How It Works Card */}
+        <div className="col-12 mb-4">
+          <div className="card h-100">
+            <div className="card-body">
+              <h5 className="card-title">How It Works</h5>
+              <ol>
+                <li>
+                  <strong>Take a Quiz</strong><br />
+                  Answer a few questions to find out which forms apply to your situation.
+                </li>
+                <li className="mt-2">
+                  <strong>Get Step-by-Step Help</strong><br />
+                  Our system guides you through the application — with tips, reminders, and explanations along the way.
+                </li>
+                <li className="mt-2">
+                  <strong>Review & File</strong><br />
+                  Download your completed form, ready to sign and submit. We even give you mailing instructions.
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
