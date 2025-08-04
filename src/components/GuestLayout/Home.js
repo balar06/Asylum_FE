@@ -8,9 +8,9 @@ export default function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="py-5 bg-light text-center">
+      <section className="py-5 bg-white text-center">
         <div className="container">
-          <h1 className="display-5 fw-bold text-primary">Welcome to Open Nest AI</h1>
+          <h1 className="display-6 fw-bold text-primary">Welcome to Open Nest AI</h1>
           <p className="lead fst-italic text-muted">Humanitarian immigration — reimagined. Powered by AI.</p>
           <p className="fs-5">Smart tools for safe immigration journeys.</p>
           <p className="mt-3">
@@ -61,7 +61,7 @@ export default function Home() {
       </section>
 
       {/* Who Is This For */}
-      <section className="py-5 bg-light">
+      <section className="py-5 bg-white">
         <div className="container">
           <h2 className="text-center mb-4">Who Is This For?</h2>
           <ul className="fs-5">
@@ -87,7 +87,7 @@ export default function Home() {
       </section>
 
       {/* Why Open Nest AI */}
-      <section className="py-5 bg-light">
+      <section className="py-5 bg-white">
         <div className="container">
           <h2 className="text-center mb-4">Why Open Nest AI?</h2>
           <ul className="fs-5">
@@ -113,7 +113,7 @@ export default function Home() {
       </section>
 
       {/* Partner Section */}
-      <section className="py-5 bg-light">
+      <section className="py-5 bg-white">
         <div className="container text-center">
           <h2 className="mb-3">Coming Soon: Partner With Us</h2>
           <p className="mb-4">
